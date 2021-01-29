@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">SKmn</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string-array name="Categories">
+        <item>Exercise</item>
+        <item>Game</item>
+        <item>Music</item>
+        <item>Study</item>
+    </string-array>
+
+
+
+</resources>
