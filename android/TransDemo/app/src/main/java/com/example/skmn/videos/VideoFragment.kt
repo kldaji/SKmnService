@@ -1,6 +1,8 @@
 package com.example.skmn.videos
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.os.AsyncTask
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -14,12 +16,11 @@ import com.example.skmn.R
 import com.example.skmn.databinding.FragmentVideoBinding
 import com.example.skmn.videos.YoutubeUtil.getVideoId
 import com.google.android.material.textfield.TextInputEditText
-import com.google.firebase.firestore.FirebaseFirestore
 
-class VideoFragment : Fragment(){
-    private val db = FirebaseFirestore.getInstance()
-    private val itemList = arrayListOf<ListLayout>()
-    private val adapter = ListAdapter(itemList, this.lifecycle)
+@SuppressLint("StaticFieldLeak")
+class VideoFragment : Fragment(), OnDeleteListener{
+    lateinit var db: VideoDatabase
+    var itemList = listOf<VideoEntity>()
     private var spinnerArray = mutableListOf("ShowAll","Exercise", "Game", "Music", "Study")
     private lateinit var binding: FragmentVideoBinding
 
@@ -27,56 +28,16 @@ class VideoFragment : Fragment(){
         binding = DataBindingUtil.inflate(
             inflater, R.layout.fragment_video, container, false)
 
-        binding.rvList.adapter = adapter
+        // get video database
+        db = VideoDatabase.getInstance(requireContext())!!
 
+        // main category
         val spCategory = binding.spCategory
         val spAdapter = ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item, spinnerArray)
         spAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spCategory.adapter = spAdapter
 
-        spCategory.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                val selectedItem = parent!!.getItemAtPosition(position).toString()
-                if(selectedItem == "ShowAll"){
-                    db.collection("ShowAll")
-                        .get()
-                        .addOnSuccessListener { result ->
-                            itemList.clear()
-                            for (document in result) {  // 가져온 문서들은 result에 들어감
-                                val item =
-                                    ListLayout(document["category"] as String, document["title"] as String, document["videoId"] as String)
-                                itemList.add(item)
-                            }
-                            adapter.notifyDataSetChanged()  // 리사이클러 뷰 갱신
-                        }
-                        .addOnFailureListener { exception ->
-                            // 실패할 경우
-                            Log.w("VideoFragment", "Error getting documents: $exception")
-                        }
-                }else{
-                    db.collection("ShowAll")
-                        .whereEqualTo("category", selectedItem)
-                        .get()
-                        .addOnSuccessListener { result ->
-                            itemList.clear()
-                            for (document in result) {  // 가져온 문서들은 result에 들어감
-                                val item =
-                                    ListLayout(document["category"] as String, document["title"] as String, document["videoId"] as String)
-                                itemList.add(item)
-                            }
-                            adapter.notifyDataSetChanged()  // 리사이클러 뷰 갱신
-                        }
-                        .addOnFailureListener { exception ->
-                            // 실패할 경우
-                            Log.w("VideoFragment", "Error getting documents: $exception")
-                        }
-                }
-            }
-            override fun onNothingSelected(parent: AdapterView<*>) {
-
-            }
-        }
-
+        // click plus button
         binding.btnWrite.setOnClickListener {
             val builder = AlertDialog.Builder(activity)
             val dialogView = layoutInflater.inflate(R.layout.dialog_layout, null)
@@ -90,25 +51,97 @@ class VideoFragment : Fragment(){
             builder.setView(dialogView)
             builder.setTitle("Add Video")
             builder.setPositiveButton("추가") { dialog, which ->
-                val data = hashMapOf(
-                    "category" to spinner.selectedItem.toString(),
-                    "videoId" to getVideoId(etUrl.text.toString()),
-                    "title" to etTitle.text.toString()
-                )
-
-                db.collection("ShowAll")
-                    .add(data)
-                    .addOnSuccessListener {
-                        Toast.makeText(activity, "비디오가 추가되었습니다", Toast.LENGTH_SHORT).show()
-                    }
-                    .addOnFailureListener { exception ->
-                        Log.w("VideoFragment", "Error getting documents: $exception")
-                    }
+                // Add video
+                // videoId, title, category
+                val video = VideoEntity(null, getVideoId(etUrl.text.toString()), etTitle.text.toString(), spinner.selectedItem.toString())
+                insertVideo(video)
             }
             builder.setNegativeButton("취소") { dialog, which -> }
             builder.show()
         }
+
+        spCategory.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                val selectedItem = parent!!.getItemAtPosition(position).toString()
+                // get filter category
+                getCategoryVideo(selectedItem)
+            }
+            override fun onNothingSelected(parent: AdapterView<*>) {
+
+            }
+        }
+
+
         return binding.root
+    }
+
+    private fun insertVideo(video: VideoEntity) {
+        // not coroutine
+        val insertTask = object: AsyncTask<Unit, Unit, Unit>(){
+            override fun doInBackground(vararg p0: Unit?) {
+                db.videoDAO().insert(video)
+            }
+
+            override fun onPostExecute(result: Unit?) {
+                super.onPostExecute(result)
+                getAllVideos()
+            }
+        }
+
+        insertTask.execute()
+    }
+
+    private fun getAllVideos(){
+        val getTask = object: AsyncTask<Unit, Unit, Unit>(){
+            override fun doInBackground(vararg p0: Unit?) {
+                itemList = db.videoDAO().getAll()
+            }
+
+            override fun onPostExecute(result: Unit?) {
+                super.onPostExecute(result)
+                setRecyclerView(itemList)
+            }
+        }
+
+        getTask.execute()
+    }
+
+    private fun deleteVideo(video: VideoEntity){
+        val deleteTask = object: AsyncTask<Unit, Unit, Unit>() {
+            override fun doInBackground(vararg p0: Unit?) {
+                db.videoDAO().delete(video)
+            }
+
+            override fun onPostExecute(result: Unit?) {
+                super.onPostExecute(result)
+                getAllVideos()
+            }
+        }
+
+        deleteTask.execute()
+    }
+
+    private fun setRecyclerView(itemList: List<VideoEntity>){
+        binding.rvList.adapter = ListAdapter(itemList, this.lifecycle, this)
+    }
+
+    private fun getCategoryVideo(key: String){
+        val getTask = object: AsyncTask<Unit, Unit, Unit>(){
+            override fun doInBackground(vararg p0: Unit?) {
+                itemList = db.videoDAO().getCategory(key)
+            }
+
+            override fun onPostExecute(result: Unit?) {
+                super.onPostExecute(result)
+                setRecyclerView(itemList)
+            }
+        }
+
+        getTask.execute()
+    }
+
+    override fun onDeleteListener(video: VideoEntity) {
+        deleteVideo(video)
     }
 
 
