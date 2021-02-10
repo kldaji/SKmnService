@@ -1,0 +1,59 @@
+                     {
+   "result_index": 0,
+   "results": [
+      {
+         "final": true,
+         "alternatives": [
+            {
+               "transcript": "good evening everyone thanks so much for joining us on this Sunday I'm linsey Davis we begin tonight with the dangerous winter weather more than one hundred million Americans slammed by snow and bone chilling cold a fast moving storm pushing through the I. ninety five quarter today paralyzing travel in some spots Philadelphia to New York and Boston hit with heavy wet snow more than half a foot just outside the big cities several wrecks reported from Virginia into northern New England this car overturning in Charlottesville and now the life threatening deep freeze subzero temperatures across the upper Midwest it's all setting up for a nasty Monday morning commute rob Marciano standing by but we begin tonight with Stephanie Rommel's tonight another major snow storm slamming the northeast just as life threatening cold invades the Midwest ",
+               "confidence": 0.9
+            }
+         ]
+      },
+      {
+         "final": true,
+         "alternatives": [
+            {
+               "transcript": "the interest driving conditions for millions this car flipping over in Charlottesville Virginia in Lakewood New Jersey crews pulling this car out of the ditch after it smashed through the guard rail and in New York a hazmat situation almost nine what this truck overturning and leaking oil this is the second winter storm to hit the east coast in the past week snow falling up to two inches per hour from Virginia to Pennsylvania to Rhode Island heavy wet snow falling all day in New York City on top of snow piles like this left over from last week's snow fall like this one working overtime to clear ",
+               "confidence": 0.88
+            }
+         ]
+      },
+      {
+         "final": true,
+         "alternatives": [
+            {
+               "transcript": "several covert vaccination sites in the region closed for the second time in a week well I just know I hate it and tonight that relentless arctic blast sending the Midwest into a deep freeze the temperature plunging to twenty two degrees below zero here in Wisconsin this dam in rice lake icing over wind chills in northern Minnesota dropping to minus fifty conditions that could lead to frostbite within minutes just some brutal temperatures are stepping Ramis joins us now from New York City and seven it appears that the biggest issue right now is cleaning up this storm before the really frigid temperatures arrive ",
+               "confidence": 0.89
+            }
+         ]
+      },
+      {
+         "final": true,
+         "alternatives": [
+            {
+               "transcript": "exactly Lindsay cleanup is quickly under way before the temperature drops dramatically and stays locked in the cold the bitter temperatures making travel treacherous as this front snow turns hi Lindsay lots of concern about the potential for some dangerous icing conditions Stephanie Rommel sorry thanks to you let's get right to ABC senior meteorologist rob Marciano what's the latest rob ",
+               "confidence": 0.82
+            }
+         ]
+      },
+      {
+         "final": true,
+         "alternatives": [
+            {
+               "transcript": "well it's a potent storm a lengthy thankfully it moves a lot faster the last one it's kept the totals down the low itself is already off the coast of Cape Cod take a look at that but the wrap around moisture continues to drop snow across southeast New England in southeast Massachusetts that's where you had some of the higher totals double digit in some spots double digits below zero wind chills again tomorrow morning all the milder compared to this morning the bad news is this cold is going to be entranced and dive deeper to the south through the entire we can now set up a pattern from more chances of snow across the northeast several chances as we head towards Friday Wednesday rob Marciano our thanks to you ",
+               "confidence": 0.85
+            }
+         ]
+      },
+      {
+         "final": true,
+         "alternatives": [
+            {
+               "transcript": "hi everyone George Stephanopoulos here thanks for checking out the ABC news YouTube channel if you like to get more video show highlights and watch live event coverage click on the right over here to subscribe our channel and don't forget to download the ABC news after breaking news alerts thanks for watching ",
+               "confidence": 0.96
+            }
+         ]
+      }
+   ]
+}
